@@ -1,0 +1,15 @@
+server:
+  port: 65432
+
+spring:
+
+  application:
+    name: Booking
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+
+  datasource:
+    url: jdbs:postgresql://localhost:5000/booking_db
