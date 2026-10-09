@@ -1,8 +1,7 @@
 server:
-  port: 65432
+  port: 8080
 
 spring:
-
   application:
     name: Booking
 
@@ -12,4 +11,6 @@ spring:
     open-in-view: false
 
   datasource:
-    url: jdbs:postgresql://localhost:5000/booking_db
+    url: jdbc:postgresql://localhost:5000/booking_db
+    username: admin
+    password: admin
