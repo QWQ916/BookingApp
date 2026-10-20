@@ -43,4 +43,8 @@ public class Arena {
         this.name = name; this.description = description; this.city = city; this.address = address;
         this.addedAt = LocalDateTime.now();
     }
+
+    public Arena(){
+
+    }
 }

@@ -41,4 +41,8 @@ public class Hall {
         this.name = name; this.description = description; this.arena = arena;
         this.addedAt = LocalDateTime.now();
     }
+
+    public Hall(){
+
+    }
 }

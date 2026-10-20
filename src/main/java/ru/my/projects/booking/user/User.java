@@ -30,4 +30,8 @@ public class User {
         this.fullName = fullName; this.email = email; this.age = age;
         this.createdAt = LocalDateTime.now();
     }
+
+    public User(){
+
+    }
 }

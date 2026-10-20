@@ -28,4 +28,8 @@ public class Seat {
     public Seat(Integer row, Integer seatNum, Hall hall){
         this.row = row; this.seatNum = seatNum; this.hall = hall;
     }
+
+    public Seat(){
+
+    }
 }

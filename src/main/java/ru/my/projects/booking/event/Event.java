@@ -40,4 +40,8 @@ public class Event {
     public Event(String title, LocalDateTime startsAt, LocalDateTime endsAt, BigDecimal price, Hall hall, int ageRestrict){
         this.title = title; this.startsAt = startsAt; this.endsAt = endsAt; this.price = price; this.hall = hall; this.ageRestrict = ageRestrict;
     }
+
+    public Event(){
+
+    }
 }

@@ -10,9 +10,9 @@ public record ArenaDTO(
         @NotBlank(message = "У арены должно быть имя!") @Size(max = 50, message = "Слишком длинное название для арены!") String name,
         String description,
         @NotBlank(message = "Адрес не должен быть пустым!") @Size(max = 50, message = "Слишком длинный адрес!") String address,
-        @NotNull(message = "Арена должна находиться в каком-то городе!") City city
+        @NotNull(message = "Арена должна находиться в каком-то городе!") String cityName
 ) {
-    public ArenaDTO transfer(Arena arena){
-        return new ArenaDTO(arena.getId(), arena.getName(), arena.getDescription(), arena.getAddress(), arena.getCity());
+    public static ArenaDTO transfer(Arena arena){
+        return new ArenaDTO(arena.getId(), arena.getName(), arena.getDescription(), arena.getAddress(), arena.getCity().getName());
     }
 }

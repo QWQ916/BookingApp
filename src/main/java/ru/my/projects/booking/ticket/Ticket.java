@@ -43,4 +43,8 @@ public class Ticket {
         this.status = status; this.event = event; this.user = user; this.seat = seat;
         this.createdAt = LocalDateTime.now();
     }
+
+    public Ticket(){
+
+    }
 }
