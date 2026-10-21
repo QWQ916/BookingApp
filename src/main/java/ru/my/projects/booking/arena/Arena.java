@@ -16,15 +16,19 @@ public class Arena {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Setter
     @Getter
     private String name;
 
+    @Setter
     @Getter
     private String description;
 
+    @Setter
     @Getter
     private String address;
 
+    @Setter
     @Getter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "city_id")
@@ -41,7 +45,7 @@ public class Arena {
 
     public Arena(String name, String description, String address, City city){
         this.name = name; this.description = description; this.city = city; this.address = address;
-        this.addedAt = LocalDateTime.now();
+        this.addedAt = LocalDateTime.now(); this.changedAt = LocalDateTime.now();
     }
 
     public Arena(){

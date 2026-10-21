@@ -1,9 +1,10 @@
 package ru.my.projects.booking.arena;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -17,14 +18,33 @@ public class ArenaController {
         this.service = service;
     }
 
+    @Transactional
     @GetMapping
     public List<ArenaDTO> getAll(){
         return service.getAll().stream().map(ArenaDTO::transfer).toList();
     }
 
+    @Transactional
     @GetMapping("/{id}")
     public ArenaDTO getOne(@PathVariable long id){
         return ArenaDTO.transfer(service.getOne(id));
     }
 
+    @PostMapping
+    public ResponseEntity<ArenaDTO> createArena(@Valid @RequestBody ArenaCreateDTO request){
+        return ResponseEntity.status(HttpStatus.CREATED).body(ArenaDTO.transfer(service.create(request.name(), request.description(), request.address(), request.cityName())));
+    }
+
+    @PutMapping("/{id}")
+    public ArenaDTO putArena(@Valid @RequestBody ArenaCreateDTO request, long id){
+        return ArenaDTO.transfer(service.put(id, request.name(), request.description(), request.address(), request.cityName()));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteArena(@PathVariable long id){
+        service.delete(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    // Решить костыль с LAZY загрузкой (транзакция в контроллере) - решение маппить в DTO с транзакцией или JOIN FETCH
 }
