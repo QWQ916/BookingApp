@@ -49,63 +49,6 @@
 
 ---
 
-## Модель данных
-
-```mermaid
-erDiagram
-    CITIES  ||--o{ ARENAS  : "в городе"
-    ARENAS  ||--o{ HALLS   : "содержит"
-    HALLS   ||--o{ SEATS   : "схема мест"
-    HALLS   ||--o{ EVENTS  : "проходит в"
-    EVENTS  ||--o{ TICKETS : "продаются на"
-    SEATS   ||--o{ TICKETS : "занимает"
-    USERS   ||--o{ TICKETS : "покупает"
-
-    CITIES {
-        bigint id PK
-        varchar name
-    }
-    ARENAS {
-        bigint id PK
-        varchar name
-        varchar address
-        bigint city_id FK
-    }
-    HALLS {
-        bigint id PK
-        varchar name
-        bigint arena_id FK
-    }
-    SEATS {
-        bigint id PK
-        int row
-        int seat_num
-        bigint hall_id FK
-    }
-    EVENTS {
-        bigint id PK
-        varchar title
-        timestamp starts_at
-        timestamp ends_at
-        numeric price
-        int age_restrict
-        bigint hall_id FK
-    }
-    USERS {
-        bigint id PK
-        varchar full_name
-        int age
-    }
-    TICKETS {
-        bigint id PK
-        varchar status
-        bigint event_id FK
-        bigint seat_id FK
-        bigint user_id FK
-        timestamp created_at
-    }
-```
-
 **Логика:** город → арены → залы → места. Мероприятие проходит в конкретном зале, поэтому на него доступны места именно этого зала. Билет связывает мероприятие, место и пользователя.
 
 Схема создаётся только миграциями Flyway (`src/main/resources/db/migration`), Hibernate её лишь проверяет (`ddl-auto: validate`).
@@ -114,26 +57,6 @@ erDiagram
 
 ## Как защищено двойное бронирование *(этапы 2-3)*
 
-```mermaid
-sequenceDiagram
-    actor A as Пользователь A
-    actor B as Пользователь B
-    participant S as Booking API
-    participant K as KeyDB
-    participant DB as PostgreSQL
-
-    A->>S: забронировать место 42
-    B->>S: забронировать место 42
-    S->>K: SET hold:event:42 A NX EX 600
-    K-->>S: OK (место удержано за A)
-    S->>K: SET hold:event:42 B NX EX 600
-    K-->>S: nil (уже занято)
-    S-->>B: 409 Conflict: место занято
-    A->>S: подтвердить оплату
-    S->>DB: INSERT ticket (уникальный индекс event_id + seat_id)
-    S-->>A: 201 Created
-```
-
 1. **Уникальный индекс в PostgreSQL** на пару «мероприятие + место» для активных билетов: база физически не даст создать второй билет на то же место.
 2. **Удержание места в KeyDB** атомарной командой `SET NX EX`: место «держится» за покупателем 10 минут и освобождается само, если оплату не подтвердили.
 3. **Тест конкурентности:** 10 потоков одновременно бронируют одно место, успешной должна быть ровно одна бронь.
@@ -141,19 +64,6 @@ sequenceDiagram
 ---
 
 ## Целевая архитектура *(этап 4)*
-
-```mermaid
-flowchart LR
-    C([Клиент]) --> ES[event-service<br/>арены, залы, места,<br/>мероприятия]
-    C --> BS[booking-service<br/>билеты, удержание мест]
-    BS -- REST: проверка места --> ES
-    BS -- удержание мест, TTL --> K[(KeyDB)]
-    BS -- BookingConfirmed --> MQ{{RabbitMQ}}
-    MQ --> NS[notification-service<br/>уведомления]
-    ES --> DB1[(PostgreSQL<br/>events)]
-    BS --> DB2[(PostgreSQL<br/>booking)]
-    NS --> DB3[(PostgreSQL<br/>notifications)]
-```
 
 - **Синхронно (REST):** booking-service проверяет в event-service, что место существует и относится к залу мероприятия.
 - **Асинхронно (RabbitMQ):** после подтверждения брони публикуется событие. Сервис уведомлений обрабатывает его независимо, и если он недоступен, бронирование всё равно работает, а сообщения дождутся его в очереди.
