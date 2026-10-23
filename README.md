@@ -20,7 +20,7 @@
 
 Пользователь выбирает мероприятие, видит схему зала со свободными и занятыми местами и бронирует конкретное место. Главная инженерная задача проекта: **не допустить, чтобы одно место на одно мероприятие продали дважды**, даже если два человека нажали «Купить» в одну и ту же секунду.
 
-Проект развивается поэтапно: от монолита на Spring Boot до микросервисов с кэшем и очередью сообщений. Прогресс по этапам отмечен в разделе [Roadmap](#-roadmap).
+Проект развивается поэтапно: от монолита на Spring Boot до микросервисов с кэшем и очередью сообщений. Прогресс по этапам отмечен в разделе [Roadmap](#-roadmap). Актуальная разработка ведётся в ветке `dev`.
 
 **Что здесь можно посмотреть:**
 
@@ -36,7 +36,7 @@
 
 | Область | Технологии | Статус |
 |---|---|:---:|
-| Язык и платформа | Java 17, Spring Boot 4, Maven | ✅ |
+| Язык и платформа | Java 17, Spring Boot 4, Maven, Lombok | ✅ |
 | Web и API | Spring Web MVC, Bean Validation, springdoc-openapi (Swagger UI) | ✅ |
 | Данные | PostgreSQL 17, Spring Data JPA (Hibernate), Flyway | ✅ |
 | Инфраструктура | Docker, Docker Compose | ✅ |
@@ -48,6 +48,18 @@
 ✅ уже в проекте · ⏳ запланировано
 
 ---
+
+## Модель данных
+
+| Таблица | Что хранит |
+|---|---|
+| `cities` | Города (название уникально) |
+| `arenas` | Арены: название, описание, адрес, город |
+| `halls` | Залы внутри арены |
+| `seats` | Места в зале: ряд и номер. Комбинация «зал + ряд + место» уникальна |
+| `events` | Мероприятия: название, время начала и конца, цена, возрастное ограничение, зал |
+| `users` | Пользователи: ФИО, email (уникален), возраст |
+| `tickets` | Билеты: мероприятие, место, пользователь и статус (`HELD`, `CONFIRMED`, `CANCELLED`, `CHECKED`) |
 
 **Логика:** город → арены → залы → места. Мероприятие проходит в конкретном зале, поэтому на него доступны места именно этого зала. Билет связывает мероприятие, место и пользователя.
 
@@ -73,19 +85,26 @@
 
 ## Структура проекта
 
+Код разложен по фичам: в каждом пакете лежат сущность, DTO, репозиторий, а по мере готовности сервис и контроллер.
+
 ```
 BookingApp/
-├── docker-compose.yaml              # PostgreSQL для локальной разработки
+├── docker-compose.yaml                  # PostgreSQL для локальной разработки
 ├── pom.xml
 └── src/
     ├── main/
     │   ├── java/ru/my/projects/booking/
     │   │   ├── BookingApplication.java
-    │   │   ├── arena/      ⏳ города, арены, залы
-    │   │   ├── event/      ⏳ мероприятия, схема мест
-    │   │   ├── ticket/     ⏳ бронирование и билеты
-    │   │   └── common/     ⏳ обработка ошибок, конфигурация
-    │   │       (внутри фич: controller / service / repository / dto / entity)
+    │   │   ├── city/       ✅ entity, DTO, repository, service, controller
+    │   │   ├── arena/      ✅ entity, DTO, repository, service, controller
+    │   │   ├── hall/       ⏳ entity, DTO, repository (сервис и контроллер в работе)
+    │   │   ├── seat/       ⏳ entity, DTO, repository
+    │   │   ├── event/      ⏳ entity, DTO, repository
+    │   │   ├── user/       ⏳ entity, DTO, repository
+    │   │   ├── ticket/     ⏳ entity, DTO, repository
+    │   │   ├── enums/      TicketStatus
+    │   │   └── common/
+    │   │       └── exception/   GlobalExceptionHandler, ResourceNotFoundException
     │   └── resources/
     │       ├── application.yml
     │       └── db/migration/
@@ -109,34 +128,38 @@ docker compose up -d
 
 | Что | Адрес |
 |---|---|
-| API | http://localhost:8080 |
+| API | http://localhost:8080/api/0 |
 | Swagger UI | http://localhost:8080/swagger-ui.html |
 | PostgreSQL | `localhost:5000`, БД `booking_db` |
 
 ---
 
-## API *(планируется)*
+## API
+
+Базовый путь: `/api/0`
 
 | Метод | Эндпоинт | Описание | Статус |
 |---|---|---|:---:|
-| `GET / POST` | `/api/cities` | Города | ⏳ |
-| `GET / POST / PUT / DELETE` | `/api/arenas` | Арены | ⏳ |
-| `POST` | `/api/arenas/{id}/halls` | Создать зал сразу со схемой мест (ряды × места) | ⏳ |
-| `GET / POST / PUT / DELETE` | `/api/events` | Мероприятия, фильтры по городу, арене и дате, пагинация | ⏳ |
-| `GET` | `/api/events/{id}/seats` | Карта мест: свободно / занято | ⏳ |
-| `POST` | `/api/tickets` | Забронировать место | ⏳ |
-| `POST` | `/api/tickets/{id}/confirm` | Подтвердить бронь | ⏳ |
-| `POST` | `/api/tickets/{id}/cancel` | Отменить бронь | ⏳ |
-| `GET` | `/api/tickets/my` | Мои билеты | ⏳ |
+| `GET / POST` | `/cities` | Список городов, добавить город | ✅ |
+| `GET / PUT / DELETE` | `/cities/{id}` | Получить, изменить, удалить город | ✅ |
+| `GET / POST` | `/arenas` | Список арен, добавить арену (город указывается по названию) | ✅ |
+| `GET / PUT / DELETE` | `/arenas/{id}` | Получить, изменить, удалить арену | ✅ |
+| `POST` | `/arenas/{id}/halls` | Создать зал сразу со схемой мест (ряды × места) | ⏳ |
+| `GET / POST / PUT / DELETE` | `/events` | Мероприятия, фильтры по городу, арене и дате, пагинация | ⏳ |
+| `GET` | `/events/{id}/seats` | Карта мест: свободно / занято | ⏳ |
+| `POST` | `/tickets` | Забронировать место | ⏳ |
+| `POST` | `/tickets/{id}/confirm` | Подтвердить бронь | ⏳ |
+| `POST` | `/tickets/{id}/cancel` | Отменить бронь | ⏳ |
+| `GET` | `/tickets/my` | Мои билеты | ⏳ |
 
-Ответы об ошибках в едином формате: `400` ошибка валидации, `404` не найдено, `409` место уже занято.
+Ответы об ошибках в едином формате (`status`, `error`, `message`). Сейчас обрабатывается `404` не найдено, в планах `400` ошибка валидации и `409` место уже занято.
 
 ---
 
 ## 🗺 Roadmap
 
 ### Этап 0. Подготовка
-- [x] Проект на Spring Boot (Web MVC, Data JPA, Validation, Flyway, PostgreSQL)
+- [x] Проект на Spring Boot (Web MVC, Data JPA, Validation, Flyway, PostgreSQL, Lombok)
 - [x] PostgreSQL в Docker Compose
 - [x] Первая миграция Flyway со схемой БД
 - [x] `ddl-auto: validate`, `open-in-view: false`
@@ -144,12 +167,16 @@ docker compose up -d
 - [x] README с описанием проекта и планом
 
 ### Этап 1. Каталог
-- [ ] Entity для городов, арен, залов, мест и мероприятий, связи `@ManyToOne(fetch = LAZY)`
-- [ ] CRUD-эндпоинты, наружу только DTO
-- [ ] Создание зала сразу со схемой мест
-- [ ] Валидация входных данных (`@Valid`, Bean Validation)
-- [ ] Единый формат ошибок через `@RestControllerAdvice`
-- [ ] Пагинация и фильтры для мероприятий
+- [x] Entity для всех таблиц, связи `@ManyToOne(fetch = LAZY)`
+- [x] DTO на Java records, валидация входных данных в DTO
+- [x] Репозитории Spring Data JPA для всех сущностей
+- [x] Глобальный обработчик ошибок `@RestControllerAdvice` (404)
+- [x] CRUD для городов
+- [x] CRUD для арен
+- [ ] Убрать `@Transactional` из контроллеров: маппинг в DTO внутри сервиса или `JOIN FETCH` в репозитории
+- [ ] Обработка ошибок валидации (400)
+- [ ] CRUD для залов и создание зала сразу со схемой мест
+- [ ] CRUD для мероприятий, пагинация и фильтры
 - [ ] Карта мест мероприятия (JOIN мест и билетов)
 - [ ] Unit-тесты сервисов (JUnit 5, Mockito)
 
