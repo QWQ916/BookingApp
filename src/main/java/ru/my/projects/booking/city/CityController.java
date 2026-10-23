@@ -1,6 +1,7 @@
 package ru.my.projects.booking.city;
 
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,20 +19,18 @@ public class CityController {
         this.service = service;
     }
 
-    @Transactional
     @GetMapping
     public List<CityDTO> getCities(){
         return service.getAll().stream().map(CityDTO::transfer).toList();
     }
 
-    @Transactional
     @GetMapping("/{id}")
     public CityDTO getCity(@PathVariable long id){
         return CityDTO.transfer(service.getOne(id));
     }
 
     @PostMapping
-    public ResponseEntity<CityDTO> createCity(@RequestBody CityCreateDTO request){
+    public ResponseEntity<CityDTO> createCity(@Valid @RequestBody CityCreateDTO request){
         return ResponseEntity.status(HttpStatus.CREATED).body(CityDTO.transfer(service.create(request.name())));
     }
 
@@ -42,9 +41,8 @@ public class CityController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CityDTO> putCity(@PathVariable long id, @RequestBody CityCreateDTO request){
+    public ResponseEntity<CityDTO> putCity(@Valid @PathVariable long id, @RequestBody CityCreateDTO request){
         return ResponseEntity.status(HttpStatus.OK).body(CityDTO.transfer(service.edit(id, request.name())));
     }
 
-    // Решить костыль с LAZY загрузкой (транзакция в контроллере) - решение маппить в DTO с транзакцией или JOIN FETCH
 }

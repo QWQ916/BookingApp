@@ -37,7 +37,7 @@ CREATE TABLE seats (
     id BIGSERIAL PRIMARY KEY,
     row INT NOT NULL,
     seat_num INT NOT NULL,
-    hall_id BIGINT NULL REFERENCES halls(id),
+    hall_id BIGINT NOT NULL REFERENCES halls(id),
 
     CONSTRAINT uk_hall_row_seat UNIQUE (hall_id, row, seat_num)
 );

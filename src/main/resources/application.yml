@@ -14,3 +14,8 @@ spring:
     url: jdbc:postgresql://localhost:5000/booking_db
     username: admin
     password: admin
+
+logging:
+  level:
+    hibernate:
+      SQL: debug

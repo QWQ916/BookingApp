@@ -1,6 +1,6 @@
 package ru.my.projects.booking.city;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 import ru.my.projects.booking.common.exception.ResourceNotFoundException;
 

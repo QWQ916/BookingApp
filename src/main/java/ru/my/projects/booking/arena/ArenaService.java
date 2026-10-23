@@ -1,6 +1,6 @@
 package ru.my.projects.booking.arena;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 import ru.my.projects.booking.city.City;
 import ru.my.projects.booking.city.CityRepository;
@@ -20,12 +20,10 @@ public class ArenaService {
         this.cityRepo = cityRepo;
     }
 
-    @Transactional
     public List<Arena> getAll(){
         return arenaRepo.findAll();
     }
 
-    @Transactional
     public Arena getOne(long id){
         return arenaRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Арена с ID = " + id + " не найдена!"));
     }

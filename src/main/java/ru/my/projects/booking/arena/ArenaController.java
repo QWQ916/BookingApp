@@ -18,13 +18,11 @@ public class ArenaController {
         this.service = service;
     }
 
-    @Transactional
     @GetMapping
     public List<ArenaDTO> getAll(){
         return service.getAll().stream().map(ArenaDTO::transfer).toList();
     }
 
-    @Transactional
     @GetMapping("/{id}")
     public ArenaDTO getOne(@PathVariable long id){
         return ArenaDTO.transfer(service.getOne(id));
@@ -36,7 +34,7 @@ public class ArenaController {
     }
 
     @PutMapping("/{id}")
-    public ArenaDTO putArena(@Valid @RequestBody ArenaCreateDTO request, long id){
+    public ArenaDTO putArena(@Valid @RequestBody ArenaCreateDTO request, @PathVariable long id){
         return ArenaDTO.transfer(service.put(id, request.name(), request.description(), request.address(), request.cityName()));
     }
 
@@ -46,5 +44,4 @@ public class ArenaController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    // Решить костыль с LAZY загрузкой (транзакция в контроллере) - решение маппить в DTO с транзакцией или JOIN FETCH
 }
