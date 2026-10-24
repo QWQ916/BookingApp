@@ -20,10 +20,12 @@ public class ArenaService {
         this.cityRepo = cityRepo;
     }
 
+    @Transactional(readOnly = true)
     public List<Arena> getAll(){
         return arenaRepo.findAll();
     }
 
+    @Transactional(readOnly = true)
     public Arena getOne(long id){
         return arenaRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Арена с ID = " + id + " не найдена!"));
     }

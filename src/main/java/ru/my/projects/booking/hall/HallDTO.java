@@ -1,17 +1,13 @@
 package ru.my.projects.booking.hall;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-import ru.my.projects.booking.arena.Arena;
-
 public record HallDTO(
         Long id,
-        @NotBlank(message = "У зала должно быть имя!") @Size(max = 30, message = "Слишком большое название зала") String name,
+        String name,
         String description,
-        @NotNull(message = "У зала должна быть арена!") Arena arena
+        String arenaName,
+        Integer maxCountSeats
 ) {
-    public HallDTO transfer(Hall hall){
-        return new HallDTO(hall.getId(), hall.getName(), hall.getDescription(), hall.getArena());
+    public static HallDTO transfer(Hall hall){
+        return new HallDTO(hall.getId(), hall.getName(), hall.getDescription(), hall.getArena().getName() + " (ID = " + hall.getArena().getId() + ")", hall.getMaxCountSeats());
     }
 }

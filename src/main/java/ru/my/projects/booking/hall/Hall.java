@@ -3,10 +3,8 @@ package ru.my.projects.booking.hall;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.cglib.core.Local;
 import ru.my.projects.booking.arena.Arena;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -17,12 +15,15 @@ public class Hall {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Setter
     @Getter
     private String name;
 
+    @Setter
     @Getter
     private String description;
 
+    @Setter
     @Getter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "arena_id")
@@ -37,9 +38,16 @@ public class Hall {
     @Column(name = "changed_at")
     private LocalDateTime changedAt;
 
-    public Hall(String name, String description, Arena arena){
+    @Setter
+    @Getter
+    @Column(name = "max_count_seats")
+    private Integer maxCountSeats;
+
+
+    public Hall(String name, String description, Arena arena, Integer maxCountSeats){
         this.name = name; this.description = description; this.arena = arena;
-        this.addedAt = LocalDateTime.now();
+        this.addedAt = LocalDateTime.now(); this.changedAt = LocalDateTime.now();
+        this.maxCountSeats = maxCountSeats;
     }
 
     public Hall(){

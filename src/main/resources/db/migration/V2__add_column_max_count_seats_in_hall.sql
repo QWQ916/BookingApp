@@ -1,0 +1,1 @@
+ALTER TABLE halls ADD COLUMN max_count_seats INT NOT NULL DEFAULT 50;

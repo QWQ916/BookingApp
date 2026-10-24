@@ -10,7 +10,7 @@ public record UserDTO(
         @NotNull(message = "У пользователя обязан быть email!") @Email(message = "Должно быть корректный и существующий email!") String email,
         @NotNull(message = "У пользователя должен быть указан возраст!") Integer age
 ) {
-    public UserDTO transfer(User user){
+    public static UserDTO transfer(User user){
         return new UserDTO(user.getId(), user.getFullName(), user.getEmail(), user.getAge());
     }
 }

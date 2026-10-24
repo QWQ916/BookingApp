@@ -1,0 +1,11 @@
+package ru.my.projects.booking.hall;
+
+import jakarta.validation.constraints.*;
+
+public record HallCreateDTO(
+        @NotBlank(message = "У зала должно быть имя!") @Size(max = 30, message = "Слишком большое название зала") String name,
+        String description,
+        @NotNull(message = "У зала должна быть арена!") Long arenaId,
+        @NotNull(message = "Залу нужно количество мест в нём!") @Min(message = "В зале не могут отсутствовать места", value = 1) @Max(value = 1_000_000, message = "Зал не может содержать больше миллиона мест") Integer maxCountSeats
+) {
+}

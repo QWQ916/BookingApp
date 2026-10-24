@@ -13,7 +13,7 @@ public record TicketDTO(
         @NotNull(message = "Каждый билет содержит пользователя, купившего его!") User user,
         @NotNull(message = "Каждый билет покупается на конкретное место!") Seat seat
 ) {
-    public TicketDTO transfer(Ticket ticket){
+    public static TicketDTO transfer(Ticket ticket){
         return new TicketDTO(ticket.getId(), ticket.getStatus(), ticket.getEvent(), ticket.getUser(), ticket.getSeat());
     }
 }

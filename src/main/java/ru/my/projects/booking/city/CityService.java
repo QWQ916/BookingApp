@@ -14,12 +14,12 @@ public class CityService {
         this.cityRepo = cityRepo;
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<City> getAll(){
         return cityRepo.findAll();
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public City getOne(long id){
         return cityRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Город с указанным ID = " + id + " не найден!"));
     }

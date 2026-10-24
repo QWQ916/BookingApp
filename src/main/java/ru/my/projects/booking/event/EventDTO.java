@@ -17,7 +17,7 @@ public record EventDTO(
         @NotNull(message = "У события долже быть зал, где все роходит") Hall hall,
         int ageRestrict
 ) {
-    public EventDTO transfer(Event event){
+    public static EventDTO transfer(Event event){
         return new EventDTO(event.getId(), event.getTitle(), event.getStartsAt(), event.getEndsAt(), event.getPrice(), event.getHall(), event.getAgeRestrict());
     }
 }
