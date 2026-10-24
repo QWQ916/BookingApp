@@ -97,7 +97,7 @@ BookingApp/
     │   │   ├── BookingApplication.java
     │   │   ├── city/       ✅ entity, DTO, repository, service, controller
     │   │   ├── arena/      ✅ entity, DTO, repository, service, controller
-    │   │   ├── hall/       ⏳ entity, DTO, repository (сервис и контроллер в работе)
+    │   │   ├── hall/       ✅ entity, DTO, repository, service, controller
     │   │   ├── seat/       ⏳ entity, DTO, repository
     │   │   ├── event/      ⏳ entity, DTO, repository
     │   │   ├── user/       ⏳ entity, DTO, repository
@@ -144,7 +144,7 @@ docker compose up -d
 | `GET / PUT / DELETE` | `/cities/{id}` | Получить, изменить, удалить город | ✅ |
 | `GET / POST` | `/arenas` | Список арен, добавить арену (город указывается по названию) | ✅ |
 | `GET / PUT / DELETE` | `/arenas/{id}` | Получить, изменить, удалить арену | ✅ |
-| `POST` | `/arenas/{id}/halls` | Создать зал сразу со схемой мест (ряды × места) | ⏳ |
+| `POST` | `/arenas/{id}/halls` | Создать зал сразу со схемой мест (ряды × места) | ✅⏳ |
 | `GET / POST / PUT / DELETE` | `/events` | Мероприятия, фильтры по городу, арене и дате, пагинация | ⏳ |
 | `GET` | `/events/{id}/seats` | Карта мест: свободно / занято | ⏳ |
 | `POST` | `/tickets` | Забронировать место | ⏳ |
@@ -173,9 +173,9 @@ docker compose up -d
 - [x] Глобальный обработчик ошибок `@RestControllerAdvice` (404)
 - [x] CRUD для городов
 - [x] CRUD для арен
-- [ ] Убрать `@Transactional` из контроллеров: маппинг в DTO внутри сервиса или `JOIN FETCH` в репозитории
+- [x] Убрать `@Transactional` из контроллеров: маппинг в DTO внутри сервиса или `JOIN FETCH` в репозитории
 - [ ] Обработка ошибок валидации (400)
-- [ ] CRUD для залов и создание зала сразу со схемой мест
+- [x] CRUD для залов и создание зала сразу со схемой мест
 - [ ] CRUD для мероприятий, пагинация и фильтры
 - [ ] Карта мест мероприятия (JOIN мест и билетов)
 - [ ] Unit-тесты сервисов (JUnit 5, Mockito)
