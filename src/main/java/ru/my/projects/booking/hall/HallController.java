@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/0/halls")
+@RequestMapping("/api/0/arenas")
 public class HallController {
 
     private final HallService service;
@@ -17,27 +17,32 @@ public class HallController {
         this.service = service;
     }
 
-    @GetMapping
-    public List<HallDTO> getHalls(){
-        return service.getAll().stream().map(HallDTO::transfer).toList();
+    @GetMapping("/halls")
+    public List<HallDTO> getHalls(@RequestParam(required = false) String name){
+        return service.getAll(name).stream().map(HallDTO::transfer).toList();
     }
 
-    @GetMapping("/{id}")
-    public HallDTO getHall(Long id){
+    @GetMapping("/halls/{id}")
+    public HallDTO getHall(@PathVariable Long id){
         return HallDTO.transfer(service.getOne(id));
     }
 
-    @PostMapping
-    public ResponseEntity<HallDTO> createHall(@Valid @RequestBody HallCreateDTO request){
-        return ResponseEntity.status(HttpStatus.CREATED).body(HallDTO.transfer(service.create(request.name(), request.description(), request.arenaId(), request.maxCountSeats())));
+    @GetMapping("/{arena_id}/halls")
+    public List<HallDTO> getHallsForArena(@PathVariable(name = "arena_id") Long arenaId, @RequestParam(required = false) String name){
+        return service.getHallsForArena(arenaId, name).stream().map(HallDTO::transfer).toList();
     }
 
-    @PutMapping("/{id}")
-    public HallDTO putHall(@Valid @RequestBody HallCreateDTO request, @PathVariable Long id){
-        return HallDTO.transfer(service.put(id, request.name(), request.description(), request.arenaId()));
+    @PostMapping("/{arena_id}/hall")
+    public ResponseEntity<HallDTO> createHall(@Valid @RequestBody HallCreateDTO request, @PathVariable(name = "arena_id") Long arenaId){
+        return ResponseEntity.status(HttpStatus.CREATED).body(HallDTO.transfer(service.create(request.name(), request.description(), arenaId, request.maxCountSeats())));
     }
 
-    @DeleteMapping("/{id}")
+    @PutMapping("/{arena_id}/hall/{id}")
+    public HallDTO putHall(@Valid @RequestBody HallCreateDTO request, @PathVariable(name = "id") Long id, @PathVariable(name = "arena_id") Long arenaId){
+        return HallDTO.transfer(service.put(id, request.name(), request.description(), arenaId));
+    }
+
+    @DeleteMapping("/halls/{id}")
     public ResponseEntity<Void> deleteHall(@PathVariable Long id){
         service.delete(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

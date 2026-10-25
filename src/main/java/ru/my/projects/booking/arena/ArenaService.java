@@ -21,7 +21,10 @@ public class ArenaService {
     }
 
     @Transactional(readOnly = true)
-    public List<Arena> getAll(){
+    public List<Arena> getAll(String name){
+        if (name != null && !name.isBlank()){
+            return arenaRepo.findByNameContainsIgnoreCase(name);
+        }
         return arenaRepo.findAll();
     }
 

@@ -15,4 +15,13 @@ public interface HallRepository extends JpaRepository<Hall, Long> {
     @Override
     @EntityGraph(attributePaths = "arena")
     Optional<Hall> findById(Long id);
+
+    @EntityGraph(attributePaths = "arena")
+    List<Hall> findByArenaId(Long arenaId);
+
+    @EntityGraph(attributePaths = "arena")
+    List<Hall> findByNameContainsIgnoreCase(String query);
+
+    @EntityGraph(attributePaths = "arena")
+    List<Hall> findByArenaIdAndNameContainsIgnoreCase(Long arenaId, String query);
 }

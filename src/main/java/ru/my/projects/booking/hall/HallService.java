@@ -20,13 +20,27 @@ public class HallService {
     }
 
     @Transactional(readOnly = true)
-    public List<Hall> getAll(){
+    public List<Hall> getAll(String name){
+        if (name != null && !name.isBlank()){
+            return hallRepo.findByNameContainsIgnoreCase(name);
+        }
+
         return hallRepo.findAll();
     }
 
     @Transactional(readOnly = true)
     public Hall getOne(long id){
         return hallRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Залл с ID = " + id + " не найден!"));
+    }
+
+    @Transactional(readOnly = true)
+    public List<Hall> getHallsForArena(Long arenaId, String name){
+        Arena arena = arenaRepo.findById(arenaId).orElseThrow(() -> new ResourceNotFoundException("Арены с заданным ID = " + arenaId + " не существует!"));
+
+        if (name != null && !name.isBlank()){
+            return hallRepo.findByArenaIdAndNameContainsIgnoreCase(arenaId, name);
+        }
+        return hallRepo.findByArenaId(arenaId);
     }
 
     @Transactional

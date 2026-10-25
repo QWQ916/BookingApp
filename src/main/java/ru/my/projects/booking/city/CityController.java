@@ -20,8 +20,8 @@ public class CityController {
     }
 
     @GetMapping
-    public List<CityDTO> getCities(){
-        return service.getAll().stream().map(CityDTO::transfer).toList();
+    public List<CityDTO> getCities(@RequestParam(required = false) String name){
+        return service.getAll(name).stream().map(CityDTO::transfer).toList();
     }
 
     @GetMapping("/{id}")

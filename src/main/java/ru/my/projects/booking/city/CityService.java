@@ -15,7 +15,10 @@ public class CityService {
     }
 
     @Transactional(readOnly = true)
-    public List<City> getAll(){
+    public List<City> getAll(String name){
+        if (name != null && !name.isBlank()){
+            return cityRepo.findByNameContainsIgnoreCase(name);
+        }
         return cityRepo.findAll();
     }
 

@@ -1,6 +1,5 @@
 package ru.my.projects.booking.arena;
 
-import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/api/0/arenas")
 public class ArenaController {
@@ -19,8 +19,8 @@ public class ArenaController {
     }
 
     @GetMapping
-    public List<ArenaDTO> getAll(){
-        return service.getAll().stream().map(ArenaDTO::transfer).toList();
+    public List<ArenaDTO> getAll(@RequestParam(required = false) String name){
+        return service.getAll(name).stream().map(ArenaDTO::transfer).toList();
     }
 
     @GetMapping("/{id}")
