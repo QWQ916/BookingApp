@@ -98,7 +98,7 @@ BookingApp/
     │   │   ├── city/       ✅ entity, DTO, repository, service, controller
     │   │   ├── arena/      ✅ entity, DTO, repository, service, controller
     │   │   ├── hall/       ✅ entity, DTO, repository, service, controller
-    │   │   ├── seat/       ⏳ entity, DTO, repository
+    │   │   ├── seat/       ✅⏳ entity, DTO, repository
     │   │   ├── event/      ⏳ entity, DTO, repository
     │   │   ├── user/       ⏳ entity, DTO, repository
     │   │   ├── ticket/     ⏳ entity, DTO, repository
