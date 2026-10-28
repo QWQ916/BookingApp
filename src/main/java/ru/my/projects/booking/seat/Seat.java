@@ -2,6 +2,7 @@ package ru.my.projects.booking.seat;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 import ru.my.projects.booking.hall.Hall;
 
 @Entity
@@ -14,12 +15,15 @@ public class Seat {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Setter
     @Getter
     private Integer row;
 
+    @Setter
     @Getter
     private Integer seatNum;
 
+    @Setter
     @Getter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "hall_id")

@@ -42,7 +42,7 @@ public class CityController {
 
     @PutMapping("/{id}")
     public ResponseEntity<CityDTO> putCity(@Valid @PathVariable long id, @RequestBody CityCreateDTO request){
-        return ResponseEntity.status(HttpStatus.OK).body(CityDTO.transfer(service.edit(id, request.name())));
+        return ResponseEntity.status(HttpStatus.OK).body(CityDTO.transfer(service.put(id, request.name())));
     }
 
 }

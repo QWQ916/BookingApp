@@ -42,7 +42,7 @@ public class CityService {
     }
 
     @Transactional
-    public City edit(long id, String name){
+    public City put(long id, String name){
         City city = cityRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Нечего редактировать! Такого города с ID = " + id + " не существует!"));
         name = name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
         city.setName(name);

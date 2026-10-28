@@ -4,6 +4,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 import ru.my.projects.booking.city.City;
 import ru.my.projects.booking.city.CityRepository;
+import ru.my.projects.booking.city.CityService;
 import ru.my.projects.booking.common.exception.ResourceNotFoundException;
 
 import java.time.LocalDateTime;
@@ -15,13 +16,15 @@ public class ArenaService {
     private final ArenaRepository arenaRepo;
     private final CityRepository cityRepo;
 
-    public ArenaService(ArenaRepository arenaRepo, CityRepository cityRepo){
+    private final CityService cityServ;
+
+    public ArenaService(ArenaRepository arenaRepo, CityRepository cityRepo, CityService cityServ){
         this.arenaRepo = arenaRepo;
-        this.cityRepo = cityRepo;
+        this.cityRepo = cityRepo; this.cityServ = cityServ;
     }
 
     @Transactional(readOnly = true)
-    public List<Arena> getAll(String name){
+    public List<Arena> getAllFlat(String name){
         if (name != null && !name.isBlank()){
             return arenaRepo.findByNameContainsIgnoreCase(name);
         }
@@ -31,6 +34,12 @@ public class ArenaService {
     @Transactional(readOnly = true)
     public Arena getOne(long id){
         return arenaRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Арена с ID = " + id + " не найдена!"));
+    }
+
+    @Transactional(readOnly = true)
+    public List<Arena> getAllNested(Long cityId){
+        City city = cityServ.getOne(cityId);
+        return arenaRepo.findByCityId(cityId);
     }
 
     @Transactional

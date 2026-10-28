@@ -18,4 +18,7 @@ public interface ArenaRepository extends JpaRepository<Arena, Long> {
 
     @EntityGraph(attributePaths = "city")
     List<Arena> findByNameContainsIgnoreCase(String name);
+
+    @EntityGraph(attributePaths = "city")
+    List<Arena> findByCityId(Long cityId);
 }

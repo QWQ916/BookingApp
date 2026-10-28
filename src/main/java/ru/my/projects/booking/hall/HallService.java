@@ -4,23 +4,25 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 import ru.my.projects.booking.arena.Arena;
 import ru.my.projects.booking.arena.ArenaRepository;
+import ru.my.projects.booking.arena.ArenaService;
 import ru.my.projects.booking.common.exception.ResourceNotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class HallService {
 
     private final HallRepository hallRepo;
-    private final ArenaRepository arenaRepo;
+    private final ArenaService arenaServ;
 
-    public HallService(HallRepository hallRepo, ArenaRepository arenaRepo){
-        this.hallRepo = hallRepo; this.arenaRepo = arenaRepo;
+    public HallService(HallRepository hallRepo, ArenaRepository arenaRepo, ArenaService arenaServ){
+        this.hallRepo = hallRepo; this.arenaServ = arenaServ;
     }
 
     @Transactional(readOnly = true)
-    public List<Hall> getAll(String name){
+    public List<Hall> getAllFlat(String name){
         if (name != null && !name.isBlank()){
             return hallRepo.findByNameContainsIgnoreCase(name);
         }
@@ -30,12 +32,13 @@ public class HallService {
 
     @Transactional(readOnly = true)
     public Hall getOne(long id){
-        return hallRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Залл с ID = " + id + " не найден!"));
+        return hallRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Зал с ID = " + id + " не найден!"));
     }
 
+
     @Transactional(readOnly = true)
-    public List<Hall> getHallsForArena(Long arenaId, String name){
-        Arena arena = arenaRepo.findById(arenaId).orElseThrow(() -> new ResourceNotFoundException("Арены с заданным ID = " + arenaId + " не существует!"));
+    public List<Hall> getAllNested(Long arenaId, String name){
+        Arena arena = arenaServ.getOne(arenaId);
 
         if (name != null && !name.isBlank()){
             return hallRepo.findByArenaIdAndNameContainsIgnoreCase(arenaId, name);
@@ -45,20 +48,18 @@ public class HallService {
 
     @Transactional
     public Hall create(String name, String description, Long arenaId, Integer maxCountSeats){
-        Arena arena = arenaRepo.findById(arenaId).orElseThrow(() -> new ResourceNotFoundException("Невозможно создать зал, так как арены с ID = " + arenaId + " не существует!"));
+        Arena arena = arenaServ.getOne(arenaId);
         Hall newHall = new Hall(name, description, arena, maxCountSeats);
         hallRepo.save(newHall);
         return newHall;
     }
 
     @Transactional
-    public Hall put(Long id, String name, String description, Long newArenaId){
-        Arena arena = arenaRepo.findById(newArenaId).orElseThrow(() -> new ResourceNotFoundException("Невозможно редактировать зал, так как арены с ID = " + newArenaId + " не существует!"));
+    public Hall put(Long id, String name, String description){
         Hall hall = hallRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Невозможно редактировать зал, так как зала с ID = " + id + " не существует!"));
         hall.setName(name);
         hall.setDescription(description);
         hall.setChangedAt(LocalDateTime.now());
-        hall.setArena(arena);
         hallRepo.save(hall);
         return hall;
     }
