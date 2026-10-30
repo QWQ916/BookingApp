@@ -40,14 +40,20 @@ public class Hall {
 
     @Setter
     @Getter
-    @Column(name = "max_count_seats")
-    private Integer maxCountSeats;
+    @Column(name = "seats_in_rows")
+    private Integer seatsInRows;
+
+    @Setter
+    @Getter
+    @Column(name = "rows_count")
+    private Integer rowsCount;
 
 
-    public Hall(String name, String description, Arena arena, Integer maxCountSeats){
+
+    public Hall(String name, String description, Arena arena, Integer seatsInRows, Integer rowsCount){
         this.name = name; this.description = description; this.arena = arena;
         this.addedAt = LocalDateTime.now(); this.changedAt = LocalDateTime.now();
-        this.maxCountSeats = maxCountSeats;
+        this.rowsCount = rowsCount; this.seatsInRows = seatsInRows;
     }
 
     public Hall(){

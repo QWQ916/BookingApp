@@ -5,9 +5,10 @@ public record HallDTO(
         String name,
         String description,
         String arenaName,
-        Integer maxCountSeats
+        Integer seatsInRows,
+        Integer rowsCount
 ) {
     public static HallDTO transfer(Hall hall){
-        return new HallDTO(hall.getId(), hall.getName(), hall.getDescription(), hall.getArena().getName() + " (ID = " + hall.getArena().getId() + ")", hall.getMaxCountSeats());
+        return new HallDTO(hall.getId(), hall.getName(), hall.getDescription(), hall.getArena().getName(), hall.getSeatsInRows(), hall.getRowsCount());
     }
 }

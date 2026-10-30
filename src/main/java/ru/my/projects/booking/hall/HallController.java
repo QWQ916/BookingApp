@@ -34,12 +34,17 @@ public class HallController {
 
     @PostMapping("/arenas/{arena_id}/halls")
     public ResponseEntity<HallDTO> createHall(@Valid @RequestBody HallCreateDTO request, @PathVariable(name = "arena_id") Long arenaId){
-        return ResponseEntity.status(HttpStatus.CREATED).body(HallDTO.transfer(service.create(request.name(), request.description(), arenaId, request.maxCountSeats())));
+        return ResponseEntity.status(HttpStatus.CREATED).body(HallDTO.transfer(service.create(request.name(), request.description(), arenaId, request.rowsCount(), request.seatsInRows())));
+    }
+
+    @PatchMapping("/halls/{id}")
+    public HallDTO patchHall(@PathVariable Long id, @Valid @RequestBody HallPatchDTO request){
+        return HallDTO.transfer(service.patch(id, request.rowsCount(), request.seatsInRows()));
     }
 
     @PutMapping("/halls/{id}")
     public HallDTO putHall(@Valid @RequestBody HallCreateDTO request, @PathVariable(name = "id") Long id){
-        return HallDTO.transfer(service.put(id, request.name(), request.description()));
+        return HallDTO.transfer(service.put(id, request.name(), request.description(), request.rowsCount(), request.seatsInRows()));
     }
 
     @DeleteMapping("/halls/{id}")

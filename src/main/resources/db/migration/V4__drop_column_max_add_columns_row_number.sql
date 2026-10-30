@@ -1,0 +1,4 @@
+ALTER TABLE halls DROP COLUMN max_count_seats;
+
+ALTER TABLE halls ADD COLUMN rows_count INT NOT NULL DEFAULT 5;
+ALTER TABLE halls ADD COLUMN seats_in_rows INT NOT NULL DEFAULT 10;

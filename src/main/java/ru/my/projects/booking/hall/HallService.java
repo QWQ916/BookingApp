@@ -47,19 +47,33 @@ public class HallService {
     }
 
     @Transactional
-    public Hall create(String name, String description, Long arenaId, Integer maxCountSeats){
+    public Hall create(String name, String description, Long arenaId, Integer rowsCount, Integer seatsInRows){
         Arena arena = arenaServ.getOne(arenaId);
-        Hall newHall = new Hall(name, description, arena, maxCountSeats);
+        Hall newHall = new Hall(name, description, arena, seatsInRows, rowsCount);
         hallRepo.save(newHall);
         return newHall;
     }
 
     @Transactional
-    public Hall put(Long id, String name, String description){
+    public Hall patch(Long id, Integer rowsCount, Integer seatsInRows){
+        Hall hall = hallRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Невозможно редактировать зал, так как зала с ID = " + id + " не существует!"));
+        if (rowsCount != null) hall.setRowsCount(rowsCount);
+        if (seatsInRows != null) hall.setSeatsInRows(seatsInRows);
+        hallRepo.save(hall);
+
+        return hall;
+    }
+
+    @Transactional
+    public Hall put(Long id, String name, String description, Integer rowsCount, Integer seatsInRows){
         Hall hall = hallRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Невозможно редактировать зал, так как зала с ID = " + id + " не существует!"));
         hall.setName(name);
         hall.setDescription(description);
         hall.setChangedAt(LocalDateTime.now());
+
+        hall.setRowsCount(rowsCount);
+        hall.setSeatsInRows(seatsInRows);
+
         hallRepo.save(hall);
         return hall;
     }
