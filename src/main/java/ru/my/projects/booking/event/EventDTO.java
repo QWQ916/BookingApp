@@ -1,23 +1,26 @@
 package ru.my.projects.booking.event;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-import ru.my.projects.booking.hall.Hall;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public record EventDTO(
         Long id,
-        @NotBlank(message = "События без названия не может быть!") @Size(max = 50, message = "Слишком длинное имя для события!") String title,
-        @NotNull(message = "У события должно быть начало!") LocalDateTime startsAt,
-        @NotNull(message = "Событие не может быть вечным!") LocalDateTime endsAt,
+        String title,
+
+        @JsonFormat(pattern = "dd.MM.yyyy | HH:mm:ss")
+        LocalDateTime startsAt,
+
+        @JsonFormat(pattern = "dd.MM.yyyy | HH:mm:ss")
+        LocalDateTime endsAt,
+
         BigDecimal price,
-        @NotNull(message = "У события долже быть зал, где все роходит") Hall hall,
+        String hallName,
+        String arenaName,
         int ageRestrict
 ) {
     public static EventDTO transfer(Event event){
-        return new EventDTO(event.getId(), event.getTitle(), event.getStartsAt(), event.getEndsAt(), event.getPrice(), event.getHall(), event.getAgeRestrict());
+        return new EventDTO(event.getId(), event.getTitle(), event.getStartsAt(), event.getEndsAt(), event.getPrice(), event.getHall().getArena().getName(), event.getHall().getName(), event.getAgeRestrict());
     }
 }
