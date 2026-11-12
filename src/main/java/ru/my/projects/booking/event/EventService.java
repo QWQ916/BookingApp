@@ -25,17 +25,26 @@ public class EventService {
     }
 
     @Transactional(readOnly = true)
-    public List<Event> getAllNested(Long arenaId, Long hallId){
+    public List<Event> getAllNested(Long arenaId, Long hallId, String title){
         Arena arena = arenaServ.getOne(arenaId);
         Hall hall = hallServ.getOne(hallId);
 
         if (!Objects.equals(hall.getArena().getId(), arenaId)) throw new ResourceNotFoundException("У данной арены с ID = " + arenaId + " нет заданного зала с ID = " + hallId);
 
+        if (title != null && !title.isBlank()){
+            return eventRepo.findByTitleContainsIgnoreCaseAndHallId(title.trim(), hallId);
+        }
+
         return eventRepo.findByHallId(hallId);
     }
 
     @Transactional(readOnly = true)
-    public List<Event> getAllFlat(){
+    public List<Event> getAllFlat(String title){
+
+        if (title != null && !title.isBlank()){
+            return eventRepo.findByTitleContainsIgnoreCase(title.trim());
+        }
+
         return eventRepo.findAll();
     }
 

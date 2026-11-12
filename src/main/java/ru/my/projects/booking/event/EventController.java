@@ -17,22 +17,22 @@ public class EventController {
     }
 
     @GetMapping("/arenas/{arena_id}/halls/{hall_id}/events")
-    public List<EventDTO> getEventsNested(@PathVariable(name = "arena_id") Long arenaId, @PathVariable(name = "hall_id") Long hallId){
-        return service.getAllNested(arenaId, hallId).stream().map(EventDTO::transfer).toList();
+    public List<EventDTO> getEventsNested(@PathVariable(name = "arena_id") Long arenaId, @PathVariable(name = "hall_id") Long hallId, @RequestParam(name = "title", required = false) String title){
+        return service.getAllNested(arenaId, hallId, title).stream().map(EventDTO::transfer).toList();
     }
 
     @GetMapping("/events")
-    public List<EventDTO> getEventsFlat(){
-        return service.getAllFlat().stream().map(EventDTO::transfer).toList();
+    public List<EventDTO> getEventsFlat(@RequestParam(name = "title", required = false) String title){
+        return service.getAllFlat(title).stream().map(EventDTO::transfer).toList();
     }
 
     @GetMapping("/events/{id}")
-    public EventDTO getEvent(Long id){
+    public EventDTO getEvent(@PathVariable Long id){
         return EventDTO.transfer(service.getOne(id));
     }
 
     @PostMapping("/arenas/{arena_id}/halls/{hall_id}/events")
-    public ResponseEntity<EventDTO> createEvent(@Valid @PathVariable(name = "arena_id") Long arenaId, @PathVariable(name = "hall_id") Long hallId, @Valid @RequestBody EventCreateDTO request){
+    public ResponseEntity<EventDTO> createEvent(@PathVariable(name = "arena_id") Long arenaId, @PathVariable(name = "hall_id") Long hallId, @Valid @RequestBody EventCreateDTO request){
         return ResponseEntity.status(HttpStatus.CREATED).body(EventDTO.transfer(service.create(arenaId, hallId, request.title(), request.startsAt(), request.endsAt(), request.price(), request.ageRestrict())));
     }
 

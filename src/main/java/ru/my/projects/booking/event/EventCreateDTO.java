@@ -11,8 +11,8 @@ import java.time.LocalDateTime;
 
 public record EventCreateDTO(
         @NotBlank(message = "События без названия не может быть!") @Size(max = 50, message = "Слишком длинное имя для события!") String title,
-        @NotNull(message = "У события должно быть начало!") @Future(message = "Событие не может начаться раньше сегодня") @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss") LocalDateTime startsAt,
-        @NotNull(message = "Событие не может быть вечным!") @Future(message = "Событие не может закончиться раньше сегодня") @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss") LocalDateTime endsAt,
+        @NotNull(message = "У события должно быть начало!") @Future(message = "Событие не может начаться раньше сегодня") LocalDateTime startsAt,
+        @NotNull(message = "Событие не может быть вечным!") @Future(message = "Событие не может закончиться раньше сегодня") LocalDateTime endsAt,
         BigDecimal price,
         int ageRestrict
 ) {
