@@ -13,5 +13,7 @@ public class BookingApplication {
 }
 
 // stage-1 (доделать):
-// - CRUD users (+balance), tickets | Поиск по имени юзера и билета через параметры
+// - CRUD tickets | Поиск по имени билета через параметры
 // - Сделать свои обработки ошибок и ловлю глобальным обработчиком
+
+// - Сделать таблицу для изменений баланса у юзеров (id, user_id, balance_type (REFUND, DEPOSIT, WITHDRAW, PAID), event_id (if PAID or REFUND), amount, date)

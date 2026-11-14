@@ -1,16 +1,16 @@
 package ru.my.projects.booking.user;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 
 public record UserDTO(
         Long id,
-        @NotBlank(message = "У пользователя должно быть полное имя!") String fullName,
-        @NotNull(message = "У пользователя обязан быть email!") @Email(message = "Должно быть корректный и существующий email!") String email,
-        @NotNull(message = "У пользователя должен быть указан возраст!") Integer age
+        String fullName,
+        String email,
+        LocalDate age,
+        BigDecimal balance
 ) {
     public static UserDTO transfer(User user){
-        return new UserDTO(user.getId(), user.getFullName(), user.getEmail(), user.getAge());
+        return new UserDTO(user.getId(), user.getFullName(), user.getEmail(), user.getBirthDate(), user.getBalance());
     }
 }
